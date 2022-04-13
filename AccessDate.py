@@ -110,7 +110,7 @@ if __name__ == '__main__':
             pass
 
         # Now obtain mtime data
-	txt_file_month = elements[5]
+        txt_file_month = elements[5]
         file_day = int(elements[6])
 
         # The next field in the directory listing is either a time stamp
@@ -149,7 +149,7 @@ if __name__ == '__main__':
             stale_file_cnt += 1
 
             # Add to the cumulative size
-            file_size = int(elements[3])            
+            file_size = int(elements[4])            
 
         else:
             # File is "live"
