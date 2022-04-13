@@ -131,6 +131,7 @@ if __name__ == '__main__':
             else:
                 file_year = 2022
         else:
+            # It is a year field so more than 6 months ago
             file_year = int(elements[7])
 
 
@@ -149,14 +150,18 @@ if __name__ == '__main__':
             stale_file_cnt += 1
 
             # Add to the cumulative size
-            file_size = int(elements[4])            
+            stale_file_size += int(elements[4])            
 
         else:
             # File is "live"
             outfile1.write(line)
             live_file_cnt += 1
+            live_file_size += int(elements[4])
 
     # Print finishing totals
+    giga = 1000 * 1000 * 1000
     print("Total Files processed %s" % (stale_file_cnt + live_file_cnt))
     print("Total live files %s" % (live_file_cnt))
-    print("Total stale files %s" % (stale_file_cnt))
+    print("Total Live File size (GB) is %d" % (live_file_size/giga))
+    print("Total Stale files %s" % (stale_file_cnt))
+    print("Total Stale File size (GB) is %d" % (stale_file_size/giga))
