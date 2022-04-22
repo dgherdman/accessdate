@@ -15,17 +15,23 @@
 #  parse out the directory path and the filename. We may want to produce lists
 #  of files but not used in V1.0
 #
-#   version 1.0  21/03/22   Dave Herdman
+#   version 1.1  22/04/22   Dave Herdman
 #
 #   Revision History
-#   V1.0    21/03/22    Initial Release Process only file totals 
+#   V1.0    21/03/22    Initial Release Process only file totals
+#   V1.1    22/04/22    Modified to produce 3 output files with the names
+#                       <input-file-path>_older.txt and 
+#	                    <input-file-path>_recent.txt and 
+#                       <input-file-path>_stats.csv
 # 
 #   Developed using the Pycharm IDE
 #   See PyCharm help at https://www.jetbrains.com/help/pycharm/
 #
-#   Usage: accessdate.py <Path-of-File-to-Process> <Path-to-output-File>
+#   Usage: accessdate.py <Path-of-File-to-Process> <Path-to-output-File-Directory>
 #
 import sys
+import os
+import os.path
 import re
 import datetime
 from datetime import date
@@ -37,24 +43,31 @@ if __name__ == '__main__':
     # process the command line agruments (if any)
     if len(sys.argv) > 2:
         # Assume first argument is the path to the filename
-        # Second aegument is the output file path
+        # Second aegument is the output files directory
         # silently ignore any other arguments
+		# The output file path IS NOT a file name there 
         in_file = sys.argv[1]
-        out_file = sys.argv[2]
+        out_file_dir = sys.argv[2]
     else:
-        print("Usage: accessdate.py  <input-file-path> <output-file-path>")
+        print("Usage: accessdate.py  <input-file-path> <output-file-directory-path>")
         sys.exit("Incorrect number of arguments")
 
 
 
     dirlist = open(in_file, "r")
-    outfile1 = open(out_file,"w")
-    outfile2 = open("year.txt", "w")
+	
+	# Formulate the output file names
+	in_file_name = os.path.basename(in_file)
+	outfile1_name = os.path.join(out_file_dir,os.path.splitext(in_file_name)[0],"_recent.txt")
+	outfile2_name = os.path.join(out_file_dir,os.path.splitext(in_file_name)[0],"_older.txt")
+	stats_file_name = os.path.join(out_file_dir,os.path.splitext(in_file_name)[0],"_stats.csv")
+    outfile1 = open(outfile1_name,"w")
+    outfile2 = open("outfile2_name", "w")
 
     # set pattern for a time field
     pat = re.compile(r'\d\d\:\d\d')
 
-    # Determine the 13 month threshold date based on today;s date. This
+    # Determine the 13 month threshold date based on today's date. This
     # is probably not quite 13 months as the listing which we will
     # process is either days or weeks old but this is probably good 
     # enough for our requirements. An alternative would be to specify the
@@ -158,10 +171,17 @@ if __name__ == '__main__':
             live_file_cnt += 1
             live_file_size += int(elements[4])
 
-    # Print finishing totals
+    # 
+	# Output finishing totals
+	# Then Close all files
     giga = 1000 * 1000 * 1000
-    print("Total Files processed %s" % (stale_file_cnt + live_file_cnt))
-    print("Total live files %s" % (live_file_cnt))
-    print("Total Live File size (GB) is %d" % (live_file_size/giga))
-    print("Total Stale files %s" % (stale_file_cnt))
-    print("Total Stale File size (GB) is %d" % (stale_file_size/giga))
+	
+	statsfile = open(stats_file_name,"w")
+	
+    statsfile.write("Total Files processed,Total live files,Total Live File size (GB),Total Stale files,Total Stale File size (GB)")
+	statsfile.write(str(stale_file_cnt + live_file_cnt) + "," + str(stale_file_cnt + live_file_cnt) + str(live_file_cnt) \
+      + "," + str(live_file_size/giga) + "," + str(stale_file_cnt) + "," + str(stale_file_size/giga) +"\n")
+	  
+	statsfile.close()
+	outfile1.close()
+	outfile2.close()
