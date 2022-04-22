@@ -57,12 +57,16 @@ if __name__ == '__main__':
     dirlist = open(in_file, "r")
 	
 	# Formulate the output file names
-	in_file_name = os.path.basename(in_file)
-	outfile1_name = os.path.join(out_file_dir,os.path.splitext(in_file_name)[0],"_recent.txt")
-	outfile2_name = os.path.join(out_file_dir,os.path.splitext(in_file_name)[0],"_older.txt")
-	stats_file_name = os.path.join(out_file_dir,os.path.splitext(in_file_name)[0],"_stats.csv")
+    in_file_name = os.path.basename(in_file)
+    in_file_fname = os.path.splitext(in_file_name)[0]
+    nu_filename = in_file_fname + "_recent.txt"
+    outfile1_name = os.path.join(out_file_dir,nu_filename)
+    nu_filename = in_file_fname + "_older.txt"
+    outfile2_name = os.path.join(out_file_dir,nu_filename)
+    nu_filename = in_file_fname + "_stats.csv"
+    stats_file_name = os.path.join(out_file_dir,nu_filename)
     outfile1 = open(outfile1_name,"w")
-    outfile2 = open("outfile2_name", "w")
+    outfile2 = open(outfile2_name, "w")
 
     # set pattern for a time field
     pat = re.compile(r'\d\d\:\d\d')
@@ -176,12 +180,12 @@ if __name__ == '__main__':
 	# Then Close all files
     giga = 1000 * 1000 * 1000
 	
-	statsfile = open(stats_file_name,"w")
+    statsfile = open(stats_file_name,"w")
 	
-    statsfile.write("Total Files processed,Total live files,Total Live File size (GB),Total Stale files,Total Stale File size (GB)")
-	statsfile.write(str(stale_file_cnt + live_file_cnt) + "," + str(stale_file_cnt + live_file_cnt) + str(live_file_cnt) \
+    statsfile.write("Total Files processed,Total live files,Total Live File size (GB),Total Stale files,Total Stale File size (GB)\n")
+    statsfile.write(str(stale_file_cnt + live_file_cnt) + "," + str(live_file_cnt) \
       + "," + str(live_file_size/giga) + "," + str(stale_file_cnt) + "," + str(stale_file_size/giga) +"\n")
 	  
-	statsfile.close()
-	outfile1.close()
-	outfile2.close()
+    statsfile.close()
+    outfile1.close()
+    outfile2.close()
